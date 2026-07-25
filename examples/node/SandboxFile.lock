@@ -1,0 +1,21 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: SandboxLock
+
+metadata:
+  name: node-example
+  sandboxFileDigest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  generatedBy:
+    name: lifetime-sandbox
+    version: 0.1.0-alpha.0
+
+environment:
+  image:
+    reference: node:22-bookworm
+    digest: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+sources:
+  primary:
+    type: context
+    path: /workspace/project
+    contentDigest: sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+    access: read-write

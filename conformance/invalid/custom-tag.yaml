@@ -1,0 +1,6 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata: !sandboxfile
+  name: custom-tag
+environment:
+  image: node:22-bookworm

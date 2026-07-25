@@ -1,0 +1,13 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: task-cycle
+environment:
+  image: node:22-bookworm
+tasks:
+  build:
+    command: npm run build
+    dependsOn: [test]
+  test:
+    command: npm test
+    dependsOn: [build]

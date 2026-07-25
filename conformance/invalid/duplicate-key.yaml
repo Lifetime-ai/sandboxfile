@@ -1,0 +1,7 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: duplicate-key
+environment:
+  image: node:22-bookworm
+  image: node:20-bookworm

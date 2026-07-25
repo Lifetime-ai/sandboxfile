@@ -1,0 +1,35 @@
+{
+  "manifests": [
+    {
+      "file": "valid/full.yaml",
+      "digest": "sha256:183cbc3e38137c43d6c708794f10c687d2524c590346e8c3acaacd4eb542f449"
+    },
+    {
+      "file": "valid/minimal.yaml",
+      "digest": "sha256:c27af8b55253be4a7ee570682251bbf76f33289c7d8f369c13247bba3819695b"
+    },
+    {
+      "file": "valid/minimal-explicit-defaults.yaml",
+      "digest": "sha256:c27af8b55253be4a7ee570682251bbf76f33289c7d8f369c13247bba3819695b"
+    }
+  ],
+  "contexts": [
+    {
+      "entries": [
+        {
+          "path": "src",
+          "type": "directory",
+          "mode": "0755"
+        },
+        {
+          "path": "README.md",
+          "type": "file",
+          "mode": "0644",
+          "size": "5",
+          "digest": "sha256:2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+        }
+      ],
+      "digest": "sha256:31a5895088900008c2dfb10e2292d6eb95d0a20e9e91a5616102383c9d9bb2dc"
+    }
+  ]
+}

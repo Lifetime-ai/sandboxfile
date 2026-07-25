@@ -1,0 +1,13 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: first-document
+environment:
+  image: node:22-bookworm
+---
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: second-document
+environment:
+  image: node:22-bookworm

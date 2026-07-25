@@ -1,0 +1,98 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+
+metadata:
+  name: node-example
+  description: A short-lived Node.js coding-agent environment
+  labels:
+    runtime: node
+
+environment:
+  image: node:22-bookworm
+  workdir: /workspace/project
+  user: node
+  env:
+    CI: "true"
+
+resources:
+  cpu:
+    request: 1000m
+    limit: "2"
+  memory:
+    request: 2Gi
+    limit: 4Gi
+  disk:
+    limit: 20Gi
+  processes:
+    limit: 256
+
+lifecycle:
+  ttl: 2h
+  idleTimeout: 20m
+  cleanup: destroy
+
+sources:
+  primary:
+    type: context
+    path: /workspace/project
+    access: read-write
+
+setup:
+  bootstrap:
+    - corepack enable
+    - pnpm install --frozen-lockfile
+  ready:
+    command: node --version
+    timeout: 1m
+
+tasks:
+  test:
+    command: pnpm test
+    timeout: 20m
+  build:
+    command: pnpm build
+    timeout: 20m
+    dependsOn:
+      - test
+
+network:
+  default: deny
+  allow:
+    - host: github.com
+      protocols: [https, ssh]
+    - host: registry.npmjs.org
+      protocols: [https]
+
+credentials:
+  - name: github
+    provider: github
+    permissions:
+      contents: write
+      pullRequests: write
+    delivery: proxy
+
+capabilities:
+  shell: true
+  browser: false
+  privileged: false
+  hostMounts: false
+  containerRuntime: false
+
+persistence:
+  caches:
+    - name: pnpm
+      path: /home/node/.local/share/pnpm/store
+      scope: project
+      retention: 7d
+
+outputs:
+  artifacts:
+    - name: test-results
+      path: test-results/**
+      retention: 7d
+  evidence:
+    commands: true
+    gitDiff: true
+    tests: true
+    resourceUsage: true
+    networkAccess: true

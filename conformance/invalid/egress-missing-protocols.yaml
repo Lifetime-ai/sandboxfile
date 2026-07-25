@@ -1,0 +1,9 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: egress-missing-protocols
+environment:
+  image: node:22-bookworm
+network:
+  allow:
+    - host: example.com

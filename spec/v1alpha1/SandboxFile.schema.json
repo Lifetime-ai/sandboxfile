@@ -1,0 +1,750 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Lifetime-ai/sandboxfile/v0.1.0-alpha.0/spec/v1alpha1/SandboxFile.schema.json",
+  "title": "SandboxFile",
+  "description": "A provider-neutral request for a reproducible, policy-controlled agent computer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "environment"
+  ],
+  "properties": {
+    "apiVersion": {
+      "const": "sandboxfile.dev/v1alpha1"
+    },
+    "kind": {
+      "const": "Sandbox"
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+    "environment": {
+      "$ref": "#/$defs/environment"
+    },
+    "resources": {
+      "$ref": "#/$defs/resources"
+    },
+    "lifecycle": {
+      "$ref": "#/$defs/lifecycle"
+    },
+    "sources": {
+      "$ref": "#/$defs/sources"
+    },
+    "setup": {
+      "$ref": "#/$defs/setup"
+    },
+    "tasks": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/name"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/task"
+      }
+    },
+    "network": {
+      "$ref": "#/$defs/network"
+    },
+    "credentials": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/credentialRequest"
+      },
+      "maxItems": 32
+    },
+    "capabilities": {
+      "$ref": "#/$defs/capabilities"
+    },
+    "persistence": {
+      "$ref": "#/$defs/persistence"
+    },
+    "outputs": {
+      "$ref": "#/$defs/outputs"
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Namespaced, non-secret extension requests. Unsupported extensions are critical by default.",
+      "propertyNames": {
+        "pattern": "^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?/[A-Za-z0-9][A-Za-z0-9._-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/extensionRequest"
+      }
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,62}$"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "labels": {
+          "type": "object",
+          "maxProperties": 64,
+          "propertyNames": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,126}$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "image"
+      ],
+      "properties": {
+        "image": {
+          "$ref": "#/$defs/imageReference",
+          "description": "An OCI image reference. Production execution must use the digest resolved in SandboxFile.lock."
+        },
+        "workdir": {
+          "$ref": "#/$defs/absolutePath"
+        },
+        "user": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "entrypoint": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "default": [
+            "/bin/sh",
+            "-eu",
+            "-c"
+          ]
+        },
+        "env": {
+          "type": "object",
+          "description": "Non-secret environment variables only. Credential values are forbidden.",
+          "maxProperties": 128,
+          "propertyNames": {
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 4096
+          }
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cpu": {
+          "$ref": "#/$defs/cpuRange"
+        },
+        "memory": {
+          "$ref": "#/$defs/storageRange"
+        },
+        "disk": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "limit"
+          ],
+          "properties": {
+            "limit": {
+              "$ref": "#/$defs/storageQuantity"
+            }
+          }
+        },
+        "processes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "limit"
+          ],
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1048576
+            }
+          }
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ttl": {
+          "$ref": "#/$defs/duration"
+        },
+        "idleTimeout": {
+          "$ref": "#/$defs/duration"
+        },
+        "cleanup": {
+          "enum": [
+            "destroy",
+            "retain"
+          ],
+          "default": "destroy"
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primary": {
+          "$ref": "#/$defs/source"
+        },
+        "repositories": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/repository"
+          }
+        }
+      }
+    },
+    "setup": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bootstrap": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384
+          }
+        },
+        "ready": {
+          "$ref": "#/$defs/command"
+        }
+      }
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "enum": [
+            "deny",
+            "allow"
+          ],
+          "default": "deny"
+        },
+        "allow": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/egressRule"
+          }
+        },
+        "ingress": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/ingressRule"
+          }
+        }
+      }
+    },
+    "credentialRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "provider",
+        "permissions"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "provider": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,62}$"
+        },
+        "permissions": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 64,
+          "propertyNames": {
+            "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,126}$"
+          },
+          "additionalProperties": {
+            "enum": [
+              "read",
+              "write"
+            ]
+          }
+        },
+        "repositories": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+          },
+          "uniqueItems": true
+        },
+        "delivery": {
+          "const": "proxy",
+          "default": "proxy"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "shell": {
+          "type": "boolean"
+        },
+        "browser": {
+          "type": "boolean"
+        },
+        "privileged": {
+          "type": "boolean"
+        },
+        "hostMounts": {
+          "type": "boolean"
+        },
+        "containerRuntime": {
+          "type": "boolean",
+          "description": "Requests an isolated OCI-compatible nested or provider-managed container runtime. It never implies access to the host runtime."
+        }
+      }
+    },
+    "persistence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "caches": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/cache"
+          }
+        }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/artifact"
+          }
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "commands": {
+              "type": "boolean"
+            },
+            "gitDiff": {
+              "type": "boolean"
+            },
+            "tests": {
+              "type": "boolean"
+            },
+            "resourceUsage": {
+              "type": "boolean"
+            },
+            "networkAccess": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "absolutePath": {
+      "type": "string",
+      "pattern": "^(?!.*(?:^|/)\\.\\.(?:/|$))/.*$",
+      "maxLength": 4096
+    },
+    "duration": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*(s|m|h|d)$"
+    },
+    "cpuQuantity": {
+      "type": "string",
+      "pattern": "^([1-9][0-9]*m|[1-9][0-9]*)$"
+    },
+    "storageQuantity": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*(Ki|Mi|Gi|Ti)$"
+    },
+    "cpuRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/cpuQuantity"
+        },
+        "limit": {
+          "$ref": "#/$defs/cpuQuantity"
+        }
+      }
+    },
+    "storageRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/storageQuantity"
+        },
+        "limit": {
+          "$ref": "#/$defs/storageQuantity"
+        }
+      }
+    },
+    "source": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/contextSource"
+        },
+        {
+          "$ref": "#/$defs/gitSource"
+        }
+      ]
+    },
+    "contextSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "path"
+      ],
+      "properties": {
+        "type": {
+          "const": "context"
+        },
+        "path": {
+          "$ref": "#/$defs/absolutePath"
+        },
+        "access": {
+          "enum": [
+            "read-only",
+            "read-write"
+          ],
+          "default": "read-write"
+        }
+      }
+    },
+    "gitSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "url",
+        "path"
+      ],
+      "properties": {
+        "type": {
+          "const": "git"
+        },
+        "url": {
+          "$ref": "#/$defs/gitUrl"
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "path": {
+          "$ref": "#/$defs/absolutePath"
+        },
+        "access": {
+          "enum": [
+            "read-only",
+            "read-write"
+          ],
+          "default": "read-write"
+        }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type",
+        "url",
+        "path"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "type": {
+          "const": "git"
+        },
+        "url": {
+          "$ref": "#/$defs/gitUrl"
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "path": {
+          "$ref": "#/$defs/absolutePath"
+        },
+        "access": {
+          "enum": [
+            "read-only",
+            "read-write"
+          ],
+          "default": "read-write"
+        }
+      }
+    },
+    "gitUrl": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^(?:https://(?![^/?#\\s]*@)[^\\s?#]+|ssh://(?![^/?#\\s]*:[^/?#\\s]*@)[^\\s?#]+|git@[^\\s:@]+:[^\\s?#]+)$",
+      "description": "A Git HTTPS URL without userinfo, query, or fragment; an SSH URL without a password, query, or fragment; or a git@host:path SSH shorthand."
+    },
+    "imageReference": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?:[a-z0-9]+(?:[._-][a-z0-9]+)*(?::[0-9]+)?/)?(?:[a-z0-9]+(?:[._-][a-z0-9]+)*/)*[a-z0-9]+(?:[._-][a-z0-9]+)*(?::[A-Za-z0-9_][A-Za-z0-9._-]{0,127})?(?:@sha256:[a-f0-9]{64})?$"
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command"
+      ],
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65536
+        },
+        "timeout": {
+          "$ref": "#/$defs/duration"
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command"
+      ],
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65536
+        },
+        "timeout": {
+          "$ref": "#/$defs/duration"
+        },
+        "dependsOn": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/name"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "egressRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "host",
+        "protocols"
+      ],
+      "properties": {
+        "host": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253,
+          "pattern": "^(?:\\*\\.)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))*$",
+          "description": "A lowercase ASCII DNS host or a single leading wildcard label, not a URL."
+        },
+        "protocols": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "http",
+              "https",
+              "ssh"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "ingressRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "port"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "visibility": {
+          "enum": [
+            "private",
+            "public"
+          ],
+          "default": "private"
+        },
+        "protocol": {
+          "enum": [
+            "http",
+            "tcp"
+          ],
+          "default": "http"
+        }
+      }
+    },
+    "cache": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "path",
+        "scope"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "path": {
+          "$ref": "#/$defs/absolutePath"
+        },
+        "scope": {
+          "enum": [
+            "task",
+            "sandbox",
+            "project",
+            "user"
+          ]
+        },
+        "retention": {
+          "$ref": "#/$defs/duration"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "path"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "path": {
+          "$ref": "#/$defs/artifactPath"
+        },
+        "retention": {
+          "$ref": "#/$defs/duration"
+        }
+      }
+    },
+    "artifactPath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$",
+      "description": "A path or glob relative to environment.workdir without parent traversal."
+    },
+    "extensionRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "critical": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether a consumer that does not support this extension must reject the manifest."
+        },
+        "value": {
+          "$ref": "#/$defs/jsonValue"
+        }
+      }
+    },
+    "jsonValue": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        }
+      ]
+    }
+  }
+}
