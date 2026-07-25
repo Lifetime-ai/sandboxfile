@@ -9,7 +9,14 @@ export type CpuQuantity = string;
 export type StorageQuantity = string;
 export type Duration = string;
 export type Source = ContextSource | GitSource;
+/**
+ * A Git HTTPS URL without userinfo, query, or fragment; an SSH URL without a password, query, or fragment; or a git@host:path SSH shorthand.
+ */
 export type GitUrl = string;
+/**
+ * A path or glob relative to environment.workdir without parent traversal.
+ */
+export type ArtifactPath = string;
 export type JsonValue =
   | null
   | boolean
@@ -44,10 +51,10 @@ export interface SandboxFile {
   persistence?: Persistence;
   outputs?: Outputs;
   /**
-   * Namespaced, non-secret extension requests. Implementations must ignore or fail closed on unsupported extensions according to their declared criticality.
+   * Namespaced, non-secret extension requests. Unsupported extensions are critical by default.
    */
   extensions?: {
-    [k: string]: JsonValue;
+    [k: string]: ExtensionRequest;
   };
 }
 export interface Metadata {
@@ -59,7 +66,7 @@ export interface Metadata {
 }
 export interface Environment {
   /**
-   * An OCI image reference. Production execution should use the digest resolved in SandboxFile.lock.
+   * An OCI image reference. Production execution must use the digest resolved in SandboxFile.lock.
    */
   image: string;
   workdir?: AbsolutePath;
@@ -115,7 +122,7 @@ export interface GitSource {
   type: "git";
   url: GitUrl;
   ref?: string;
-  path?: AbsolutePath;
+  path: AbsolutePath;
   access?: "read-only" | "read-write";
 }
 export interface Repository {
@@ -123,7 +130,7 @@ export interface Repository {
   type: "git";
   url: GitUrl;
   ref?: string;
-  path?: AbsolutePath;
+  path: AbsolutePath;
   access?: "read-only" | "read-write";
 }
 export interface Setup {
@@ -158,13 +165,13 @@ export interface Network {
 }
 export interface EgressRule {
   /**
-   * A DNS host or wildcard subdomain pattern, not a URL.
+   * A lowercase ASCII DNS host or a single leading wildcard label, not a URL.
    */
   host: string;
   /**
    * @minItems 1
    */
-  protocols?: ["http" | "https" | "ssh", ...("http" | "https" | "ssh")[]];
+  protocols: ["http" | "https" | "ssh", ...("http" | "https" | "ssh")[]];
 }
 export interface IngressRule {
   name: Name;
@@ -221,6 +228,13 @@ export interface Outputs {
 }
 export interface Artifact {
   name: Name;
-  path: string;
+  path: ArtifactPath;
   retention?: Duration;
+}
+export interface ExtensionRequest {
+  /**
+   * Whether a consumer that does not support this extension must reject the manifest.
+   */
+  critical?: boolean;
+  value: JsonValue;
 }

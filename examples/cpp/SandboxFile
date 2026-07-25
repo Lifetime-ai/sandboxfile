@@ -3,7 +3,7 @@ kind: Sandbox
 
 metadata:
   name: cpp-example
-  description: A C++ build environment using CMake and Ninja
+  description: A C++ build environment using CMake
   labels:
     runtime: cpp
 
@@ -31,7 +31,7 @@ sources:
 
 setup:
   bootstrap:
-    - cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    - cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
   ready:
     command: clang++ --version && cmake --version
     timeout: 1m

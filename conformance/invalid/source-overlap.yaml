@@ -1,0 +1,15 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: source-overlap
+environment:
+  image: node:22-bookworm
+sources:
+  primary:
+    type: context
+    path: /workspace/project
+  repositories:
+    - name: nested
+      type: git
+      url: https://github.com/example/nested.git
+      path: /workspace/project/nested

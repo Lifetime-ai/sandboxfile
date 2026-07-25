@@ -70,9 +70,7 @@
           ],
           "properties": {
             "reference": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 512
+              "$ref": "#/$defs/imageReference"
             },
             "digest": {
               "$ref": "#/$defs/sha256"
@@ -116,7 +114,14 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 2048,
-      "pattern": "^(https://|ssh://|git@)[^\\s]+$"
+      "pattern": "^(?:https://(?![^/?#\\s]*@)[^\\s?#]+|ssh://(?![^/?#\\s]*:[^/?#\\s]*@)[^\\s?#]+|git@[^\\s:@]+:[^\\s?#]+)$",
+      "description": "A Git HTTPS URL without userinfo, query, or fragment; an SSH URL without a password, query, or fragment; or a git@host:path SSH shorthand."
+    },
+    "imageReference": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?:[a-z0-9]+(?:[._-][a-z0-9]+)*(?::[0-9]+)?/)?(?:[a-z0-9]+(?:[._-][a-z0-9]+)*/)*[a-z0-9]+(?:[._-][a-z0-9]+)*(?::[A-Za-z0-9_][A-Za-z0-9._-]{0,127})?(?:@sha256:[a-f0-9]{64})?$"
     },
     "gitCommit": {
       "type": "string",
@@ -164,7 +169,8 @@
       "required": [
         "type",
         "url",
-        "commit"
+        "commit",
+        "path"
       ],
       "properties": {
         "type": {
@@ -199,7 +205,8 @@
         "name",
         "type",
         "url",
-        "commit"
+        "commit",
+        "path"
       ],
       "properties": {
         "name": {

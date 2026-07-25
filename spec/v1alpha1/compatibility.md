@@ -42,7 +42,9 @@ offer a core-only fallback when possible.
 
 Consumers MUST prevent extensions from overriding core security semantics.
 Unsupported critical extensions fail closed; unsupported optional extensions
-may be ignored with a diagnostic.
+may be ignored with a diagnostic. Extension criticality defaults to `true` and
+is carried in each extension envelope; consumers MUST NOT infer it from an
+implementation-local registry.
 
 ## Lock-file compatibility
 
@@ -50,8 +52,8 @@ A lock file is valid only when:
 
 - its `apiVersion` is supported;
 - its `metadata.name` matches the manifest name;
-- `metadata.sandboxFileDigest` matches the canonicalized manifest selected by
-  the implementation;
+- `metadata.sandboxFileDigest` matches the manifest digest produced by
+  [`canonicalization.md`](canonicalization.md);
 - every resolved source corresponds to a manifest source; and
 - the image reference corresponds to the requested environment image.
 

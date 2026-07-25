@@ -40,9 +40,14 @@ requested security control.
 
 ## Project status
 
-`v1alpha1` is experimental. It is ready for implementation and feedback, but
-may still change before the first stable release. Released schema artifacts
-are immutable; incompatible changes receive a new specification version.
+`v1alpha1` is an unreleased experimental design available for prototype
+implementation and feedback. It may still change before the first alpha tag.
+Once published, tagged schema artifacts are immutable; incompatible changes
+receive a new specification version.
+
+The first alpha release is gated by the
+[`release checklist`](docs/release-checklist.md), including namespace, npm
+scope, private vulnerability reporting, and branch-protection verification.
 
 The initial scope covers:
 
@@ -64,6 +69,7 @@ provider-specific execution objects are deliberately outside `v1alpha1`.
 | --- | --- |
 | [`SPECIFICATION.md`](SPECIFICATION.md) | Version selection and normative-language rules |
 | [`spec/v1alpha1/`](spec/v1alpha1/) | Normative prose and JSON Schemas |
+| [`spec/v1alpha1/canonicalization.md`](spec/v1alpha1/canonicalization.md) | Portable lock digest algorithm |
 | [`examples/`](examples/) | Node.js, .NET, C++, and polyglot examples |
 | [`conformance/`](conformance/) | Valid and invalid implementation fixtures |
 | [`proposals/`](proposals/) | Process for evolving the specification |
@@ -85,9 +91,9 @@ the source of truth.
 
 ## Implementations
 
-[LifetimeSandbox](https://github.com/malotho/LifetimeSandbox) is the first
-control-plane implementation. It compiles untrusted SandboxFiles into immutable
-effective plans before invoking an execution provider such as OpenSandbox.
+LifetimeSandbox is the initial private control-plane prototype. It compiles
+untrusted SandboxFiles into immutable effective plans before invoking an
+execution provider such as OpenSandbox.
 
 Implementations may support additional providers, but provider SDK types and
 provider-generated sandbox identifiers are not part of this specification.

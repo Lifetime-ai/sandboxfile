@@ -12,6 +12,9 @@ The normative machine-readable definitions are:
 - [`SandboxFile.schema.json`](spec/v1alpha1/SandboxFile.schema.json)
 - [`SandboxFile.lock.schema.json`](spec/v1alpha1/SandboxFile.lock.schema.json)
 
+The normative digest and parsing rules are in
+[`canonicalization.md`](spec/v1alpha1/canonicalization.md).
+
 If normative prose and a JSON Schema disagree, the conflict is a specification
 defect. Implementations must not silently broaden the authority requested by a
 manifest while the defect is resolved.

@@ -35,11 +35,12 @@ an actively exploitable security defect requires an embargoed fix.
 
 Maintainers:
 
-1. verify the conformance suite;
-2. update the changelog;
-3. record compatibility impact;
-4. create a signed or GitHub-attested tag; and
-5. publish immutable schema artifacts.
+1. complete [`docs/release-checklist.md`](docs/release-checklist.md);
+2. verify the conformance suite;
+3. update the changelog;
+4. record compatibility impact;
+5. create a signed or GitHub-attested tag; and
+6. publish immutable schema artifacts.
 
 No single implementation automatically defines the specification. When an
 implementation and the released specification disagree, the released

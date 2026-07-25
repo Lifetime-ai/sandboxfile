@@ -5,6 +5,7 @@ The roadmap is directional. Normative changes still require proposals.
 ## 0.1 — Public extraction
 
 - v1alpha1 manifest and lock schemas
+- deterministic manifest and local-context digests
 - normative security and compatibility rules
 - generated TypeScript types
 - examples and conformance fixtures

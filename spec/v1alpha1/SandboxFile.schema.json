@@ -66,12 +66,12 @@
     },
     "extensions": {
       "type": "object",
-      "description": "Namespaced, non-secret extension requests. Implementations must ignore or fail closed on unsupported extensions according to their declared criticality.",
+      "description": "Namespaced, non-secret extension requests. Unsupported extensions are critical by default.",
       "propertyNames": {
         "pattern": "^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?/[A-Za-z0-9][A-Za-z0-9._-]*$"
       },
       "additionalProperties": {
-        "$ref": "#/$defs/jsonValue"
+        "$ref": "#/$defs/extensionRequest"
       }
     }
   },
@@ -115,10 +115,8 @@
       ],
       "properties": {
         "image": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 512,
-          "description": "An OCI image reference. Production execution should use the digest resolved in SandboxFile.lock."
+          "$ref": "#/$defs/imageReference",
+          "description": "An OCI image reference. Production execution must use the digest resolved in SandboxFile.lock."
         },
         "workdir": {
           "$ref": "#/$defs/absolutePath"
@@ -133,8 +131,15 @@
           "minItems": 1,
           "maxItems": 64,
           "items": {
-            "type": "string"
-          }
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "default": [
+            "/bin/sh",
+            "-eu",
+            "-c"
+          ]
         },
         "env": {
           "type": "object",
@@ -463,7 +468,8 @@
       "additionalProperties": false,
       "required": [
         "type",
-        "url"
+        "url",
+        "path"
       ],
       "properties": {
         "type": {
@@ -495,7 +501,8 @@
       "required": [
         "name",
         "type",
-        "url"
+        "url",
+        "path"
       ],
       "properties": {
         "name": {
@@ -528,7 +535,14 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 2048,
-      "pattern": "^(https://|ssh://|git@)[^\\s]+$"
+      "pattern": "^(?:https://(?![^/?#\\s]*@)[^\\s?#]+|ssh://(?![^/?#\\s]*:[^/?#\\s]*@)[^\\s?#]+|git@[^\\s:@]+:[^\\s?#]+)$",
+      "description": "A Git HTTPS URL without userinfo, query, or fragment; an SSH URL without a password, query, or fragment; or a git@host:path SSH shorthand."
+    },
+    "imageReference": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?:[a-z0-9]+(?:[._-][a-z0-9]+)*(?::[0-9]+)?/)?(?:[a-z0-9]+(?:[._-][a-z0-9]+)*/)*[a-z0-9]+(?:[._-][a-z0-9]+)*(?::[A-Za-z0-9_][A-Za-z0-9._-]{0,127})?(?:@sha256:[a-f0-9]{64})?$"
     },
     "command": {
       "type": "object",
@@ -576,14 +590,16 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "host"
+        "host",
+        "protocols"
       ],
       "properties": {
         "host": {
           "type": "string",
           "minLength": 1,
           "maxLength": 253,
-          "description": "A DNS host or wildcard subdomain pattern, not a URL."
+          "pattern": "^(?:\\*\\.)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))*$",
+          "description": "A lowercase ASCII DNS host or a single leading wildcard label, not a URL."
         },
         "protocols": {
           "type": "array",
@@ -671,12 +687,34 @@
           "$ref": "#/$defs/name"
         },
         "path": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 4096
+          "$ref": "#/$defs/artifactPath"
         },
         "retention": {
           "$ref": "#/$defs/duration"
+        }
+      }
+    },
+    "artifactPath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$",
+      "description": "A path or glob relative to environment.workdir without parent traversal."
+    },
+    "extensionRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "critical": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether a consumer that does not support this extension must reject the manifest."
+        },
+        "value": {
+          "$ref": "#/$defs/jsonValue"
         }
       }
     },

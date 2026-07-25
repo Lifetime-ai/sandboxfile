@@ -5,8 +5,12 @@
 
 export type Name = string;
 export type Sha256 = string;
+export type ImageReference = string;
 export type ResolvedSource = ResolvedContextSource | ResolvedGitSource;
 export type AbsolutePath = string;
+/**
+ * A Git HTTPS URL without userinfo, query, or fragment; an SSH URL without a password, query, or fragment; or a git@host:path SSH shorthand.
+ */
 export type GitUrl = string;
 export type GitCommit = string;
 
@@ -26,7 +30,7 @@ export interface SandboxFileLock {
   };
   environment: {
     image: {
-      reference: string;
+      reference: ImageReference;
       digest: Sha256;
     };
   };
@@ -49,7 +53,7 @@ export interface ResolvedGitSource {
   url: GitUrl;
   requestedRef?: string;
   commit: GitCommit;
-  path?: AbsolutePath;
+  path: AbsolutePath;
   access?: "read-only" | "read-write";
 }
 export interface ResolvedRepository {
@@ -58,6 +62,6 @@ export interface ResolvedRepository {
   url: GitUrl;
   requestedRef?: string;
   commit: GitCommit;
-  path?: AbsolutePath;
+  path: AbsolutePath;
   access?: "read-only" | "read-write";
 }

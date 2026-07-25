@@ -4,11 +4,34 @@
     "valid": true
   },
   {
+    "file": "valid/minimal-explicit-defaults.yaml",
+    "valid": true
+  },
+  {
     "file": "valid/full.yaml",
     "valid": true
   },
   {
     "file": "valid/lock.yaml",
+    "valid": true
+  },
+  {
+    "file": "valid/minimal.lock.yaml",
+    "valid": true
+  },
+  {
+    "manifest": "valid/full.yaml",
+    "lock": "valid/lock.yaml",
+    "valid": true
+  },
+  {
+    "manifest": "valid/minimal.yaml",
+    "lock": "valid/minimal.lock.yaml",
+    "valid": true
+  },
+  {
+    "manifest": "valid/minimal-explicit-defaults.yaml",
+    "lock": "valid/minimal.lock.yaml",
     "valid": true
   },
   {
@@ -23,6 +46,41 @@
   },
   {
     "file": "invalid/unpinned-lock-image.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/credential-git-url.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/credential-lock-url.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/egress-url-host.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/egress-global-wildcard.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/egress-missing-protocols.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/unwrapped-extension.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/artifact-traversal.yaml",
     "valid": false,
     "code": "SCHEMA"
   },
@@ -50,5 +108,65 @@
     "file": "invalid/resource-request-exceeds-limit.yaml",
     "valid": false,
     "code": "SF1005"
+  },
+  {
+    "file": "invalid/source-overlap.yaml",
+    "valid": false,
+    "code": "SF1006"
+  },
+  {
+    "file": "invalid/duplicate-credential-name.yaml",
+    "valid": false,
+    "code": "SF1007"
+  },
+  {
+    "file": "invalid/duplicate-lock-repository-name.yaml",
+    "valid": false,
+    "code": "SF1106"
+  },
+  {
+    "file": "invalid/duplicate-key.yaml",
+    "valid": false,
+    "code": "PARSE"
+  },
+  {
+    "file": "invalid/multiple-documents.yaml",
+    "valid": false,
+    "code": "PARSE"
+  },
+  {
+    "file": "invalid/custom-tag.yaml",
+    "valid": false,
+    "code": "PARSE"
+  },
+  {
+    "manifest": "valid/full.yaml",
+    "lock": "invalid/lock-name-mismatch.yaml",
+    "valid": false,
+    "code": "SF1101"
+  },
+  {
+    "manifest": "valid/full.yaml",
+    "lock": "invalid/lock-digest-mismatch.yaml",
+    "valid": false,
+    "code": "SF1102"
+  },
+  {
+    "manifest": "valid/full.yaml",
+    "lock": "invalid/lock-image-mismatch.yaml",
+    "valid": false,
+    "code": "SF1103"
+  },
+  {
+    "manifest": "valid/full.yaml",
+    "lock": "invalid/lock-primary-mismatch.yaml",
+    "valid": false,
+    "code": "SF1104"
+  },
+  {
+    "manifest": "valid/full.yaml",
+    "lock": "invalid/lock-repositories-mismatch.yaml",
+    "valid": false,
+    "code": "SF1105"
   }
 ]

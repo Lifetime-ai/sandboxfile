@@ -9,7 +9,7 @@
     "node": ">=22"
   },
   "files": [
-    "spec/v1alpha1/*.schema.json",
+    "spec/v1alpha1/*",
     "README.md",
     "SPECIFICATION.md",
     "LICENSE"

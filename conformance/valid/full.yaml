@@ -95,4 +95,6 @@ outputs:
     resourceUsage: true
     networkAccess: true
 extensions:
-  example.dev/traceMode: strict
+  example.dev/traceMode:
+    critical: true
+    value: strict

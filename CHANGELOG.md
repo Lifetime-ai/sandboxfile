@@ -12,7 +12,9 @@ releases. The `apiVersion` compatibility contract is documented separately in
 
 - Initial experimental `SandboxFile` v1alpha1 schema.
 - Initial `SandboxFile.lock` v1alpha1 schema.
+- RFC 8785/SHA-256 manifest and local-context digest rules.
 - Normative security and compatibility rules.
+- Fail-closed Git URL, egress host, extension, source-path, and artifact rules.
 - Node.js, .NET, C++, and polyglot examples.
-- Valid, invalid, and security-focused conformance fixtures.
+- Paired manifest/lock, parser, digest, and security-focused conformance cases.
 - Generated TypeScript declaration package.

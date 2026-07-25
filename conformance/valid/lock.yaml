@@ -2,7 +2,7 @@ apiVersion: sandboxfile.dev/v1alpha1
 kind: SandboxLock
 metadata:
   name: full
-  sandboxFileDigest: sha256:1111111111111111111111111111111111111111111111111111111111111111
+  sandboxFileDigest: sha256:183cbc3e38137c43d6c708794f10c687d2524c590346e8c3acaacd4eb542f449
   generatedBy:
     name: conformance
     version: 0.1.0

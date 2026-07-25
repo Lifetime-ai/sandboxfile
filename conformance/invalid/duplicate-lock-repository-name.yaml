@@ -1,0 +1,21 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: SandboxLock
+metadata:
+  name: duplicate-lock-repository
+  sandboxFileDigest: sha256:1111111111111111111111111111111111111111111111111111111111111111
+environment:
+  image:
+    reference: node:22-bookworm
+    digest: sha256:2222222222222222222222222222222222222222222222222222222222222222
+sources:
+  repositories:
+    - name: dependency
+      type: git
+      url: https://github.com/example/one.git
+      commit: "3333333333333333333333333333333333333333"
+      path: /workspace/one
+    - name: dependency
+      type: git
+      url: https://github.com/example/two.git
+      commit: "4444444444444444444444444444444444444444"
+      path: /workspace/two

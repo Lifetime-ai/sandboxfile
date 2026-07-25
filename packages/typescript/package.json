@@ -26,6 +26,7 @@
   },
   "scripts": {
     "build": "tsc -b",
+    "prepack": "tsc -b --force",
     "typecheck": "tsc -b --pretty false"
   }
 }

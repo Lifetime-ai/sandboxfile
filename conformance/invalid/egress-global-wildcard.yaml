@@ -1,0 +1,10 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: egress-global-wildcard
+environment:
+  image: node:22-bookworm
+network:
+  allow:
+    - host: "*"
+      protocols: [https]
