@@ -2,8 +2,19 @@ apiVersion: sandboxfile.dev/v1alpha1
 kind: SandboxLock
 metadata:
   name: minimal
-  sandboxFileDigest: sha256:c27af8b55253be4a7ee570682251bbf76f33289c7d8f369c13247bba3819695b
+  sandboxFileDigest: sha256:4368f21c2816617157a430786dc5f5b5b52871170122bcc1f2c46c066f909d99
 environment:
   image:
     reference: node:22-bookworm
-    digest: sha256:2222222222222222222222222222222222222222222222222222222222222222
+    resolved:
+      mediaType: application/vnd.oci.image.manifest.v1+json
+      digest: sha256:2222222222222222222222222222222222222222222222222222222222222222
+      size: 1234
+    selected:
+      descriptor:
+        mediaType: application/vnd.oci.image.manifest.v1+json
+        digest: sha256:2222222222222222222222222222222222222222222222222222222222222222
+        size: 1234
+      platform:
+        os: linux
+        architecture: amd64

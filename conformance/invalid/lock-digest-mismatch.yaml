@@ -6,7 +6,13 @@ metadata:
 environment:
   image:
     reference: node:22-bookworm
-    digest: sha256:2222222222222222222222222222222222222222222222222222222222222222
+    resolved: &resolved
+      mediaType: application/vnd.oci.image.manifest.v1+json
+      digest: sha256:2222222222222222222222222222222222222222222222222222222222222222
+      size: 1234
+    selected:
+      descriptor: *resolved
+      platform: { os: linux, architecture: amd64 }
 sources:
   primary:
     type: context

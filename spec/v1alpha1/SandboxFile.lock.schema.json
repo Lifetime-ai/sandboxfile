@@ -66,14 +66,33 @@
           "additionalProperties": false,
           "required": [
             "reference",
-            "digest"
+            "resolved",
+            "selected"
           ],
           "properties": {
             "reference": {
               "$ref": "#/$defs/imageReference"
             },
-            "digest": {
-              "$ref": "#/$defs/sha256"
+            "resolved": {
+              "$ref": "#/$defs/ociDescriptor",
+              "description": "The top-level descriptor resolved by the requested reference."
+            },
+            "selected": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "descriptor",
+                "platform"
+              ],
+              "properties": {
+                "descriptor": {
+                  "$ref": "#/$defs/ociManifestDescriptor"
+                },
+                "platform": {
+                  "$ref": "#/$defs/ociPlatform"
+                }
+              },
+              "description": "The immutable image manifest selected for one execution platform."
             }
           }
         }
@@ -104,6 +123,80 @@
     "sha256": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "ociDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mediaType",
+        "digest",
+        "size"
+      ],
+      "properties": {
+        "mediaType": {
+          "enum": [
+            "application/vnd.oci.image.index.v1+json",
+            "application/vnd.oci.image.manifest.v1+json",
+            "application/vnd.docker.distribution.manifest.list.v2+json",
+            "application/vnd.docker.distribution.manifest.v2+json"
+          ]
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "ociManifestDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mediaType",
+        "digest",
+        "size"
+      ],
+      "properties": {
+        "mediaType": {
+          "enum": [
+            "application/vnd.oci.image.manifest.v1+json",
+            "application/vnd.docker.distribution.manifest.v2+json"
+          ]
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "ociPlatform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "os",
+        "architecture"
+      ],
+      "properties": {
+        "os": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+        },
+        "architecture": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+        },
+        "variant": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        }
+      }
     },
     "absolutePath": {
       "type": "string",

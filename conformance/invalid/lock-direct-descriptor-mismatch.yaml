@@ -1,0 +1,20 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: SandboxLock
+metadata:
+  name: pinned
+  sandboxFileDigest: sha256:698a19f8f3ff808459bd83a310d65c7bad935ec721bea12a51df90c92dc3e2cf
+environment:
+  image:
+    reference: node@sha256:2222222222222222222222222222222222222222222222222222222222222222
+    resolved:
+      mediaType: application/vnd.oci.image.manifest.v1+json
+      digest: sha256:2222222222222222222222222222222222222222222222222222222222222222
+      size: 1234
+    selected:
+      descriptor:
+        mediaType: application/vnd.oci.image.manifest.v1+json
+        digest: sha256:8888888888888888888888888888888888888888888888888888888888888888
+        size: 2345
+      platform:
+        os: linux
+        architecture: amd64

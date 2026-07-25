@@ -1,0 +1,11 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: public-ingress
+environment:
+  image: node:22-bookworm
+network:
+  ingress:
+    - name: preview
+      port: 3000
+      visibility: public

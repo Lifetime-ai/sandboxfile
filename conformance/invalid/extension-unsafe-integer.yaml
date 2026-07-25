@@ -1,0 +1,9 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: extension-unsafe-integer
+environment:
+  image: node:22-bookworm
+extensions:
+  example.dev/large:
+    value: 9007199254740992

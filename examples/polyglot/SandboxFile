@@ -68,29 +68,34 @@ tasks:
 network:
   default: deny
   allow:
-    - host: github.com
-      protocols: [https]
-    - host: api.nuget.org
-      protocols: [https]
-    - host: registry.npmjs.org
-      protocols: [https]
+    - name: github
+      host: github.com
+      schemes: [https]
+      ports: [443]
+    - name: nuget
+      host: api.nuget.org
+      schemes: [https]
+      ports: [443]
+    - name: npm-registry
+      host: registry.npmjs.org
+      schemes: [https]
+      ports: [443]
 
 capabilities:
   shell: true
   browser: false
   privileged: false
-  hostMounts: false
   containerRuntime: false
 
 persistence:
   caches:
     - name: pnpm
       path: /home/codespace/.local/share/pnpm/store
-      scope: project
+      scope: sandbox
       retention: 7d
     - name: nuget
       path: /home/codespace/.nuget/packages
-      scope: project
+      scope: sandbox
       retention: 7d
 
 outputs:

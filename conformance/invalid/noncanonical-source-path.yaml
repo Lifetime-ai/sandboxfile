@@ -1,0 +1,10 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: noncanonical-source-path
+environment:
+  image: node:22-bookworm
+sources:
+  primary:
+    type: context
+    path: /workspace//project

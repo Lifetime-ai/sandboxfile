@@ -1,0 +1,11 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: shared-cache
+environment:
+  image: node:22-bookworm
+persistence:
+  caches:
+    - name: npm
+      path: /workspace/.npm
+      scope: project

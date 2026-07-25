@@ -29,8 +29,9 @@ boundary are trusted components of an implementation.
 - Manifests request but never grant authority.
 - Credentials remain behind a broker or provider vault.
 - Egress defaults to deny.
-- Public ingress, privileged execution, host mounts, and nested container
-  runtimes require explicit policy decisions.
+- Privileged execution and nested container runtimes require explicit policy
+  decisions.
+- Public ingress and host mounts are not expressible in v1alpha1.
 - Host container sockets are never exposed as an implementation of
   `containerRuntime`.
 - Unsupported security controls fail closed.

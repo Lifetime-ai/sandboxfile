@@ -3,6 +3,21 @@
   "version": "0.1.0-alpha.0",
   "description": "JSON Schemas for the open SandboxFile specification",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lifetime-ai/sandboxfile.git"
+  },
+  "homepage": "https://github.com/Lifetime-ai/sandboxfile#readme",
+  "bugs": {
+    "url": "https://github.com/Lifetime-ai/sandboxfile/issues"
+  },
+  "keywords": [
+    "ai-agents",
+    "sandbox",
+    "specification",
+    "security",
+    "developer-tools"
+  ],
   "type": "module",
   "packageManager": "pnpm@10.28.2",
   "engines": {
@@ -27,8 +42,10 @@
     "generate:check": "node scripts/generate-types.mjs --check",
     "typecheck": "tsc -b",
     "test:conformance": "node scripts/check-conformance.mjs",
+    "test:workflows": "node scripts/check-workflows.mjs",
+    "validate": "node packages/validator/src/cli.js validate",
     "pack:check": "node scripts/check-package.mjs",
-    "check": "pnpm generate:check && pnpm typecheck && pnpm test:conformance && pnpm pack:check"
+    "check": "pnpm generate:check && pnpm typecheck && pnpm test:conformance && pnpm test:workflows && pnpm pack:check"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

@@ -35,6 +35,7 @@ export interface SandboxFile {
   kind: "Sandbox";
   metadata: Metadata;
   environment: Environment;
+  execution?: Execution;
   resources?: Resources;
   lifecycle?: Lifecycle;
   sources?: Sources;
@@ -71,17 +72,30 @@ export interface Environment {
   image: string;
   workdir?: AbsolutePath;
   user?: string;
-  /**
-   * @minItems 1
-   * @maxItems 64
-   */
-  entrypoint?: [string, ...string[]];
+  platform?: OciPlatform;
   /**
    * Non-secret environment variables only. Credential values are forbidden.
    */
   env?: {
     [k: string]: string;
   };
+}
+/**
+ * The OCI platform that must be selected when the image resolves to a multi-platform index.
+ */
+export interface OciPlatform {
+  os: string;
+  architecture: string;
+  variant?: string;
+}
+export interface Execution {
+  /**
+   * The argv prefix used to interpret every declared command.
+   *
+   * @minItems 1
+   * @maxItems 64
+   */
+  shell?: [string, ...string[]];
 }
 export interface Resources {
   cpu?: CpuRange;
@@ -104,7 +118,7 @@ export interface StorageRange {
 export interface Lifecycle {
   ttl?: Duration;
   idleTimeout?: Duration;
-  cleanup?: "destroy" | "retain";
+  cleanup?: "destroy";
 }
 export interface Sources {
   primary?: Source;
@@ -164,6 +178,7 @@ export interface Network {
   ingress?: IngressRule[];
 }
 export interface EgressRule {
+  name: Name;
   /**
    * A lowercase ASCII DNS host or a single leading wildcard label, not a URL.
    */
@@ -171,12 +186,23 @@ export interface EgressRule {
   /**
    * @minItems 1
    */
-  protocols: ["http" | "https" | "ssh", ...("http" | "https" | "ssh")[]];
+  schemes: ["http" | "https" | "ssh", ...("http" | "https" | "ssh")[]];
+  /**
+   * @minItems 1
+   * @maxItems 32
+   */
+  ports: [number, ...number[]];
+  /**
+   * Logical credential request names that may be used only through this rule.
+   *
+   * @maxItems 32
+   */
+  credentialBindings?: Name[];
 }
 export interface IngressRule {
   name: Name;
   port: number;
-  visibility?: "private" | "public";
+  visibility?: "private";
   protocol?: "http" | "tcp";
 }
 export interface CredentialRequest {
@@ -195,7 +221,6 @@ export interface Capabilities {
   shell?: boolean;
   browser?: boolean;
   privileged?: boolean;
-  hostMounts?: boolean;
   /**
    * Requests an isolated OCI-compatible nested or provider-managed container runtime. It never implies access to the host runtime.
    */
@@ -210,7 +235,7 @@ export interface Persistence {
 export interface Cache {
   name: Name;
   path: AbsolutePath;
-  scope: "task" | "sandbox" | "project" | "user";
+  scope: "task" | "sandbox";
   retention?: Duration;
 }
 export interface Outputs {

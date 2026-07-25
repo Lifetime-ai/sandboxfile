@@ -6,5 +6,7 @@ environment:
   image: node:22-bookworm
 network:
   allow:
-    - host: https://example.com/path
-      protocols: [https]
+    - name: example
+      host: https://example.com/path
+      schemes: [https]
+      ports: [443]

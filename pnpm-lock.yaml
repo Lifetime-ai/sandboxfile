@@ -23,6 +23,18 @@ importers:
 
   packages/typescript: {}
 
+  packages/validator:
+    dependencies:
+      '@sandboxfile/schema':
+        specifier: 0.1.0-alpha.0
+        version: link:../..
+      ajv:
+        specifier: ^8.17.1
+        version: 8.20.0
+      yaml:
+        specifier: ^2.8.1
+        version: 2.9.0
+
 packages:
 
   '@apidevtools/json-schema-ref-parser@11.9.3':

@@ -1,0 +1,9 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: extension-decimal
+environment:
+  image: node:22-bookworm
+extensions:
+  example.dev/decimal:
+    value: 0.1

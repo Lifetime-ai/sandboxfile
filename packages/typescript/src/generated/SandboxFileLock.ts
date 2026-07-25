@@ -31,7 +31,14 @@ export interface SandboxFileLock {
   environment: {
     image: {
       reference: ImageReference;
-      digest: Sha256;
+      resolved: OciDescriptor;
+      /**
+       * The immutable image manifest selected for one execution platform.
+       */
+      selected: {
+        descriptor: OciManifestDescriptor;
+        platform: OciPlatform;
+      };
     };
   };
   sources?: {
@@ -41,6 +48,30 @@ export interface SandboxFileLock {
      */
     repositories?: ResolvedRepository[];
   };
+}
+/**
+ * The top-level descriptor resolved by the requested reference.
+ */
+export interface OciDescriptor {
+  mediaType:
+    | "application/vnd.oci.image.index.v1+json"
+    | "application/vnd.oci.image.manifest.v1+json"
+    | "application/vnd.docker.distribution.manifest.list.v2+json"
+    | "application/vnd.docker.distribution.manifest.v2+json";
+  digest: Sha256;
+  size: number;
+}
+export interface OciManifestDescriptor {
+  mediaType:
+    | "application/vnd.oci.image.manifest.v1+json"
+    | "application/vnd.docker.distribution.manifest.v2+json";
+  digest: Sha256;
+  size: number;
+}
+export interface OciPlatform {
+  os: string;
+  architecture: string;
+  variant?: string;
 }
 export interface ResolvedContextSource {
   type: "context";

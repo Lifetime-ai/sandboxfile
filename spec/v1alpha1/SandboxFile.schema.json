@@ -24,6 +24,9 @@
     "environment": {
       "$ref": "#/$defs/environment"
     },
+    "execution": {
+      "$ref": "#/$defs/execution"
+    },
     "resources": {
       "$ref": "#/$defs/resources"
     },
@@ -126,20 +129,9 @@
           "minLength": 1,
           "maxLength": 128
         },
-        "entrypoint": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 64,
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 4096
-          },
-          "default": [
-            "/bin/sh",
-            "-eu",
-            "-c"
-          ]
+        "platform": {
+          "$ref": "#/$defs/ociPlatform",
+          "description": "The OCI platform that must be selected when the image resolves to a multi-platform index."
         },
         "env": {
           "type": "object",
@@ -152,6 +144,28 @@
             "type": "string",
             "maxLength": 4096
           }
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "shell": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "default": [
+            "/bin/sh",
+            "-eu",
+            "-c"
+          ],
+          "description": "The argv prefix used to interpret every declared command."
         }
       }
     },
@@ -204,10 +218,7 @@
           "$ref": "#/$defs/duration"
         },
         "cleanup": {
-          "enum": [
-            "destroy",
-            "retain"
-          ],
+          "const": "destroy",
           "default": "destroy"
         }
       }
@@ -329,9 +340,6 @@
           "type": "boolean"
         },
         "privileged": {
-          "type": "boolean"
-        },
-        "hostMounts": {
           "type": "boolean"
         },
         "containerRuntime": {
@@ -590,10 +598,15 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "name",
         "host",
-        "protocols"
+        "schemes",
+        "ports"
       ],
       "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
         "host": {
           "type": "string",
           "minLength": 1,
@@ -601,7 +614,7 @@
           "pattern": "^(?:\\*\\.)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))*$",
           "description": "A lowercase ASCII DNS host or a single leading wildcard label, not a URL."
         },
-        "protocols": {
+        "schemes": {
           "type": "array",
           "minItems": 1,
           "items": {
@@ -612,6 +625,26 @@
             ]
           },
           "uniqueItems": true
+        },
+        "ports": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "uniqueItems": true
+        },
+        "credentialBindings": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/name"
+          },
+          "uniqueItems": true,
+          "description": "Logical credential request names that may be used only through this rule."
         }
       }
     },
@@ -632,10 +665,7 @@
           "maximum": 65535
         },
         "visibility": {
-          "enum": [
-            "private",
-            "public"
-          ],
+          "const": "private",
           "default": "private"
         },
         "protocol": {
@@ -665,9 +695,7 @@
         "scope": {
           "enum": [
             "task",
-            "sandbox",
-            "project",
-            "user"
+            "sandbox"
           ]
         },
         "retention": {
@@ -727,7 +755,10 @@
           "type": "boolean"
         },
         {
-          "type": "number"
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "description": "Portable extension numbers are limited to JavaScript safe integers; use strings for decimals or larger values."
         },
         {
           "type": "string"
@@ -745,6 +776,28 @@
           }
         }
       ]
+    },
+    "ociPlatform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "os",
+        "architecture"
+      ],
+      "properties": {
+        "os": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+        },
+        "architecture": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+        },
+        "variant": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        }
+      }
     }
   }
 }

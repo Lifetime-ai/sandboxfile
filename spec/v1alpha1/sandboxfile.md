@@ -69,8 +69,14 @@ non-authoritative metadata and MUST NOT carry secrets.
 
 `environment.image` is an OCI image reference. Mutable tags are allowed in a
 development manifest. Before production execution, a runtime MUST resolve the
-reference to an OCI digest, record or verify it in `SandboxFile.lock`, and
-execute that immutable digest.
+reference to an OCI descriptor, record or verify it in `SandboxFile.lock`, and
+execute the selected immutable image-manifest digest.
+
+`environment.platform` optionally requests the OCI operating system,
+architecture, and variant. When the resolved descriptor is an image index, the
+resolver MUST select exactly one matching image manifest and record both the
+top-level descriptor and selected descriptor in the lock. If no platform is
+requested, the resolver MUST still record the platform it selected.
 
 `environment.env` is limited to non-secret values. An implementation MUST reject
 known secret-bearing names and SHOULD provide a stricter organization policy.
@@ -84,8 +90,8 @@ agent processes. When omitted, the image user applies. A platform MAY substitute
 a less-privileged identity, but MUST record the effective identity; it MUST NOT
 grant a more-privileged identity solely because the manifest requests one.
 
-`environment.entrypoint` is the argv prefix for each declared command. The
-command string is appended as one final argument. It defaults to
+`execution.shell` is the argv prefix for each declared command. The command
+string is appended as one final argument. It defaults to
 `["/bin/sh", "-eu", "-c"]`. The runtime MUST bypass the image's configured
 entrypoint when invoking declared commands so command interpretation does not
 depend on image metadata.
@@ -104,8 +110,8 @@ equal to `limit`.
 
 `lifecycle.idleTimeout` allows earlier termination after inactivity.
 
-The default `cleanup` behavior is `destroy`. `retain` is a request and requires
-platform support and policy approval.
+The only `cleanup` behavior in v1alpha1 is `destroy`. Retaining a sandbox is
+deferred until portable authorization, ownership, and expiry semantics exist.
 
 ### 4.5 Sources
 
@@ -121,6 +127,11 @@ sandbox and is required. Source destinations MUST NOT overlap.
 A production runtime MUST resolve Git references to commits and record those
 commits in `SandboxFile.lock`. The lock file MUST NOT contain access tokens or
 credential-bearing URLs.
+
+Source resolution MUST disable Git hooks and clean/smudge/process filters.
+Submodules and Git LFS objects MUST NOT be fetched automatically. A future
+version may allow them only when every additional repository and object is
+declared, independently authorized, and locked.
 
 Git URLs are limited to HTTPS without user information, query, or fragment; SSH
 URLs without passwords, query, or fragment; and `git@host:path` shorthand.
@@ -153,16 +164,27 @@ execution evidence subject to redaction policy.
 
 The default egress action is `deny` when `network.default` is omitted.
 
-`network.allow` requests destination host and protocol exceptions. `protocols`
-is required. A host is a lowercase ASCII DNS name or IPv4 address, not a URL. A
-single leading wildcard label is allowed: `*.example.com` matches one or more
-complete labels before `.example.com`, but never the apex `example.com`.
+`network.allow` contains named destination rules. Every rule requires a host,
+one or more schemes, and one or more ports. A host is a lowercase ASCII DNS
+name or IPv4 address, not a URL. A single leading wildcard label is allowed:
+`*.example.com` matches one or more complete labels before `.example.com`, but
+never the apex `example.com`.
 `*`, embedded wildcards, trailing dots, URL schemes, paths, ports, queries, and
 fragments are invalid. Runtimes SHOULD resolve DNS rebinding safely and SHOULD
 record effective network observations as evidence.
 
-`network.ingress` requests an exposed port. Visibility defaults to `private`.
-`public` visibility requires explicit policy and approval.
+`credentialBindings` contains logical names from `credentials`. A broker MUST
+make a bound credential usable only through the named destination rule; the
+binding does not broaden the rule or release reusable credential values.
+
+Some providers can additionally restrict an egress rule by executable or
+application-layer request attributes. These are stricter provider controls, not
+portable v1alpha1 fields. A compiler MUST report when a provider cannot enforce
+the requested host, scheme, port, or credential binding and MUST fail before
+provisioning rather than silently weaken the rule.
+
+`network.ingress` requests an authenticated private port exposure. Visibility
+is `private` in v1alpha1. Unauthenticated public ingress is deferred.
 
 ### 4.8 Credentials
 
@@ -189,17 +211,20 @@ provider API or broadens filesystem, network, credential, or process authority.
 runtime. It MUST NOT be implemented by exposing the host Docker or Podman
 socket to the sandbox.
 
-`privileged` and `hostMounts` are high-risk requests. Platforms SHOULD deny them
-by default.
+`privileged` is a high-risk request that platforms SHOULD deny by default.
+Host mounts are not expressible in v1alpha1.
 
 ### 4.10 Persistence and outputs
 
-`persistence.caches` declares disposable performance caches. A cache is not a
-secret store or durable source of record.
+`persistence.caches` declares disposable task- or sandbox-scoped performance
+caches. A cache is not a secret store or durable source of record. Cross-run,
+project, and user caches are deferred until poisoning, ownership, and isolation
+semantics are standardized.
 
 `outputs.artifacts` selects files to preserve after execution. Artifact paths
 are relative to `environment.workdir`; absolute paths and parent traversal are
-invalid.
+invalid. Collectors MUST walk without following symlinks and MUST reject any
+selected symlink or resolved path that escapes the effective work directory.
 
 `outputs.evidence` requests execution observations such as commands, test
 results, diffs, resource usage, and network access. Evidence collection MUST
@@ -221,7 +246,8 @@ diagnostic.
 `SandboxFile.lock` captures provider-neutral immutable resolutions:
 
 - the digest of the source SandboxFile;
-- the OCI image digest;
+- the top-level OCI descriptor resolved from the requested image reference;
+- the selected immutable image-manifest descriptor and platform;
 - the exact Git commit for each Git source; and
 - a content digest for a local-context source.
 
@@ -235,8 +261,11 @@ policy independently.
 
 Manifest and local-context digests MUST be produced and verified using
 [`canonicalization.md`](canonicalization.md). A lock consumer MUST also verify
-the manifest name, image reference, and complete source correspondence. It MUST
-reject a stale, partial, duplicate, or mismatched lock.
+the manifest name, image reference, digest-pinned reference relationship,
+requested platform, descriptor relationship, and complete source
+correspondence. When the top-level descriptor is already an image manifest, it
+MUST equal the selected descriptor. It MUST reject a stale, partial, duplicate,
+or mismatched lock.
 
 ## 6. Defaults
 
@@ -246,7 +275,7 @@ them:
 | Field | Default |
 | --- | --- |
 | `environment.workdir` | `/workspace` |
-| `environment.entrypoint` | `["/bin/sh", "-eu", "-c"]` |
+| `execution.shell` | `["/bin/sh", "-eu", "-c"]` |
 | `lifecycle.cleanup` | `destroy` |
 | `network.default` | `deny` |
 | `network.ingress[].visibility` | `private` |
@@ -268,6 +297,9 @@ The following are intentionally deferred:
 - GPUs and specialized accelerators;
 - desktop environments and Windows;
 - portable checkpoints and cross-provider volumes; and
-- multi-agent orchestration.
+- multi-agent orchestration;
+- host mounts and retained sandboxes;
+- cross-run project and user caches; and
+- unauthenticated public ingress.
 
 Changes in these areas require proposals and conformance fixtures.

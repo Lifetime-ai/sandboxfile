@@ -21,6 +21,7 @@ const packages = [
       "spec/v1alpha1/SandboxFile.schema.json",
       "spec/v1alpha1/canonicalization.md",
       "spec/v1alpha1/compatibility.md",
+      "spec/v1alpha1/conformance.md",
       "spec/v1alpha1/sandboxfile.md"
     ]
   },
@@ -39,6 +40,19 @@ const packages = [
       "dist/index.js",
       "package.json"
     ]
+  },
+  {
+    name: "@sandboxfile/validator",
+    cwd: resolve(root, "packages/validator"),
+    expected: [
+      "LICENSE",
+      "README.md",
+      "package.json",
+      "src/canonicalize.js",
+      "src/cli.js",
+      "src/index.d.ts",
+      "src/index.js"
+    ]
   }
 ];
 
@@ -52,6 +66,16 @@ try {
   );
   if (rootLicense !== typesLicense) {
     console.error("@sandboxfile/types: LICENSE must match the repository license");
+    failed = true;
+  }
+  const validatorLicense = await readFile(
+    resolve(root, "packages/validator/LICENSE"),
+    "utf8"
+  );
+  if (rootLicense !== validatorLicense) {
+    console.error(
+      "@sandboxfile/validator: LICENSE must match the repository license"
+    );
     failed = true;
   }
 

@@ -55,7 +55,10 @@ A lock file is valid only when:
 - `metadata.sandboxFileDigest` matches the manifest digest produced by
   [`canonicalization.md`](canonicalization.md);
 - every resolved source corresponds to a manifest source; and
-- the image reference corresponds to the requested environment image.
+- the image reference corresponds to the requested environment image;
+- a digest-pinned image reference matches the resolved descriptor;
+- the selected platform matches any manifest platform request; and
+- a directly resolved image manifest equals the selected descriptor.
 
 Implementations MUST reject stale or mismatched locks rather than partially
 using them.

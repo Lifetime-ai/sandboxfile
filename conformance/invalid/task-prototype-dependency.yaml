@@ -1,0 +1,10 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: prototype-dependency
+environment:
+  image: node:22-bookworm
+tasks:
+  test:
+    command: npm test
+    dependsOn: [constructor]

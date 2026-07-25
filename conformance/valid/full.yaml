@@ -9,9 +9,10 @@ environment:
   image: node:22-bookworm
   workdir: /workspace/project
   user: node
-  entrypoint: [/bin/sh, -lc]
   env:
     CI: "true"
+execution:
+  shell: [/bin/sh, -lc]
 resources:
   cpu:
     request: 500m
@@ -56,8 +57,10 @@ tasks:
 network:
   default: deny
   allow:
-    - host: registry.npmjs.org
-      protocols: [https]
+    - name: npm-registry
+      host: registry.npmjs.org
+      schemes: [https]
+      ports: [443]
   ingress:
     - name: preview
       port: 3000
@@ -75,13 +78,12 @@ capabilities:
   shell: true
   browser: true
   privileged: false
-  hostMounts: false
   containerRuntime: false
 persistence:
   caches:
     - name: npm
       path: /home/node/.npm
-      scope: project
+      scope: sandbox
       retention: 7d
 outputs:
   artifacts:
