@@ -1,0 +1,8 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: unknown-field
+environment:
+  image: node:22-bookworm
+permissions:
+  allowEverything: true

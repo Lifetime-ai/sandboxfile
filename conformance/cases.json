@@ -1,0 +1,54 @@
+[
+  {
+    "file": "valid/minimal.yaml",
+    "valid": true
+  },
+  {
+    "file": "valid/full.yaml",
+    "valid": true
+  },
+  {
+    "file": "valid/lock.yaml",
+    "valid": true
+  },
+  {
+    "file": "invalid/missing-image.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/unknown-field.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/unpinned-lock-image.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/secret-env.yaml",
+    "valid": false,
+    "code": "SF1001"
+  },
+  {
+    "file": "invalid/task-missing-dependency.yaml",
+    "valid": false,
+    "code": "SF1002"
+  },
+  {
+    "file": "invalid/task-cycle.yaml",
+    "valid": false,
+    "code": "SF1003"
+  },
+  {
+    "file": "invalid/duplicate-repository-name.yaml",
+    "valid": false,
+    "code": "SF1004"
+  },
+  {
+    "file": "invalid/resource-request-exceeds-limit.yaml",
+    "valid": false,
+    "code": "SF1005"
+  }
+]

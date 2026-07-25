@@ -1,0 +1,25 @@
+name: Specification defect
+description: Report an ambiguity, schema defect, or conformance problem
+title: "Defect: "
+labels:
+  - defect
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: v0.1.0-alpha.0 / sandboxfile.dev/v1alpha1
+    validations:
+      required: true
+  - type: textarea
+    id: defect
+    attributes:
+      label: Defect
+      description: Describe the conflicting validation or behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: security
+    attributes:
+      label: Security impact
+      description: Do not disclose an exploitable vulnerability here; use a private security advisory.

@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Lifetime-ai/sandboxfile/v0.1.0-alpha.0/spec/v1alpha1/SandboxFile.lock.schema.json",
+  "title": "SandboxFileLock",
+  "description": "Immutable provider-neutral resolutions for a SandboxFile.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "environment"
+  ],
+  "properties": {
+    "apiVersion": {
+      "const": "sandboxfile.dev/v1alpha1"
+    },
+    "kind": {
+      "const": "SandboxLock"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "sandboxFileDigest"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "sandboxFileDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "generatedBy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "image"
+      ],
+      "properties": {
+        "image": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reference",
+            "digest"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "digest": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primary": {
+          "$ref": "#/$defs/resolvedSource"
+        },
+        "repositories": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/resolvedRepository"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,62}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "absolutePath": {
+      "type": "string",
+      "pattern": "^(?!.*(?:^|/)\\.\\.(?:/|$))/.*$",
+      "maxLength": 4096
+    },
+    "gitUrl": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^(https://|ssh://|git@)[^\\s]+$"
+    },
+    "gitCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40,64}$"
+    },
+    "resolvedSource": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/resolvedContextSource"
+        },
+        {
+          "$ref": "#/$defs/resolvedGitSource"
+        }
+      ]
+    },
+    "resolvedContextSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "path",
+        "contentDigest"
+      ],
+      "properties": {
+        "type": {
+          "const": "context"
+        },
+        "path": {
+          "$ref": "#/$defs/absolutePath"
+        },
+        "contentDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "access": {
+          "enum": [
+            "read-only",
+            "read-write"
+          ]
+        }
+      }
+    },
+    "resolvedGitSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "url",
+        "commit"
+      ],
+      "properties": {
+        "type": {
+          "const": "git"
+        },
+        "url": {
+          "$ref": "#/$defs/gitUrl"
+        },
+        "requestedRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "commit": {
+          "$ref": "#/$defs/gitCommit"
+        },
+        "path": {
+          "$ref": "#/$defs/absolutePath"
+        },
+        "access": {
+          "enum": [
+            "read-only",
+            "read-write"
+          ]
+        }
+      }
+    },
+    "resolvedRepository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type",
+        "url",
+        "commit"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "type": {
+          "const": "git"
+        },
+        "url": {
+          "$ref": "#/$defs/gitUrl"
+        },
+        "requestedRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "commit": {
+          "$ref": "#/$defs/gitCommit"
+        },
+        "path": {
+          "$ref": "#/$defs/absolutePath"
+        },
+        "access": {
+          "enum": [
+            "read-only",
+            "read-write"
+          ]
+        }
+      }
+    }
+  }
+}

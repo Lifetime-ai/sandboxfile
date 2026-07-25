@@ -1,0 +1,13 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: invalid-resource-range
+environment:
+  image: node:22-bookworm
+resources:
+  cpu:
+    request: "8"
+    limit: "4"
+  memory:
+    request: 16Gi
+    limit: 8Gi

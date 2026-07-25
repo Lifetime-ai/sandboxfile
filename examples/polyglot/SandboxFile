@@ -1,0 +1,106 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+
+metadata:
+  name: polyglot-example
+  description: A repository that combines Node.js, .NET, and native code
+  labels:
+    runtime: polyglot
+
+environment:
+  image: mcr.microsoft.com/devcontainers/universal:2-linux
+  workdir: /workspace/project
+  env:
+    CI: "true"
+
+resources:
+  cpu:
+    request: "4"
+    limit: "8"
+  memory:
+    request: 8Gi
+    limit: 16Gi
+  disk:
+    limit: 50Gi
+  processes:
+    limit: 2048
+
+lifecycle:
+  ttl: 4h
+  idleTimeout: 30m
+
+sources:
+  primary:
+    type: context
+    path: /workspace/project
+  repositories:
+    - name: shared-contracts
+      type: git
+      url: https://github.com/example/shared-contracts.git
+      ref: main
+      path: /workspace/shared-contracts
+      access: read-only
+
+setup:
+  bootstrap:
+    - corepack enable
+    - pnpm install --frozen-lockfile
+    - dotnet restore
+    - cmake -S native -B native/build -G Ninja
+  ready:
+    command: node --version && dotnet --info && c++ --version
+    timeout: 3m
+
+tasks:
+  native:
+    command: cmake --build native/build --parallel
+    timeout: 20m
+  application:
+    command: pnpm build && dotnet build --no-restore
+    timeout: 30m
+  verify:
+    command: pnpm test && dotnet test --no-build && ctest --test-dir native/build
+    timeout: 45m
+    dependsOn:
+      - native
+      - application
+
+network:
+  default: deny
+  allow:
+    - host: github.com
+      protocols: [https]
+    - host: api.nuget.org
+      protocols: [https]
+    - host: registry.npmjs.org
+      protocols: [https]
+
+capabilities:
+  shell: true
+  browser: false
+  privileged: false
+  hostMounts: false
+  containerRuntime: false
+
+persistence:
+  caches:
+    - name: pnpm
+      path: /home/codespace/.local/share/pnpm/store
+      scope: project
+      retention: 7d
+    - name: nuget
+      path: /home/codespace/.nuget/packages
+      scope: project
+      retention: 7d
+
+outputs:
+  artifacts:
+    - name: test-results
+      path: "**/TestResults/**"
+      retention: 7d
+  evidence:
+    commands: true
+    gitDiff: true
+    tests: true
+    resourceUsage: true
+    networkAccess: true

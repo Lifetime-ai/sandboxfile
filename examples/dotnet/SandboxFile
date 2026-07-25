@@ -1,0 +1,87 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+
+metadata:
+  name: dotnet-eshop
+  description: Build and test the current .NET eShop application
+  labels:
+    runtime: dotnet
+
+environment:
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  workdir: /workspace/eshop
+
+resources:
+  cpu:
+    request: "4"
+    limit: "8"
+  memory:
+    request: 8Gi
+    limit: 16Gi
+  disk:
+    limit: 50Gi
+  processes:
+    limit: 2048
+
+lifecycle:
+  ttl: 4h
+  idleTimeout: 30m
+
+sources:
+  primary:
+    type: git
+    url: https://github.com/dotnet/eShop.git
+    ref: main
+    path: /workspace/eshop
+    access: read-write
+
+setup:
+  bootstrap:
+    - dotnet restore eShop.slnx
+  ready:
+    command: dotnet --info
+    timeout: 2m
+
+tasks:
+  build:
+    command: dotnet build eShop.slnx --no-restore
+    timeout: 20m
+  test:
+    command: dotnet test eShop.slnx --no-build
+    timeout: 30m
+    dependsOn:
+      - build
+
+network:
+  default: deny
+  allow:
+    - host: github.com
+      protocols: [https]
+    - host: api.nuget.org
+      protocols: [https]
+    - host: mcr.microsoft.com
+      protocols: [https]
+
+capabilities:
+  shell: true
+  containerRuntime: true
+  privileged: false
+  hostMounts: false
+
+persistence:
+  caches:
+    - name: nuget
+      path: /root/.nuget/packages
+      scope: project
+      retention: 7d
+
+outputs:
+  artifacts:
+    - name: test-results
+      path: "**/TestResults/**"
+      retention: 7d
+  evidence:
+    commands: true
+    gitDiff: true
+    tests: true
+    networkAccess: true

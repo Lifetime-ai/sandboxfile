@@ -1,0 +1,6 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: minimal
+environment:
+  image: node:22-bookworm

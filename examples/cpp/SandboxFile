@@ -1,0 +1,63 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+
+metadata:
+  name: cpp-example
+  description: A C++ build environment using CMake and Ninja
+  labels:
+    runtime: cpp
+
+environment:
+  image: silkeh/clang:20-bookworm
+  workdir: /workspace/project
+
+resources:
+  cpu:
+    request: "2"
+    limit: "4"
+  memory:
+    request: 4Gi
+    limit: 8Gi
+  disk:
+    limit: 20Gi
+
+lifecycle:
+  ttl: 2h
+
+sources:
+  primary:
+    type: context
+    path: /workspace/project
+
+setup:
+  bootstrap:
+    - cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+  ready:
+    command: clang++ --version && cmake --version
+    timeout: 1m
+
+tasks:
+  build:
+    command: cmake --build build --parallel
+    timeout: 20m
+  test:
+    command: ctest --test-dir build --output-on-failure
+    timeout: 20m
+    dependsOn:
+      - build
+
+network:
+  default: deny
+
+capabilities:
+  shell: true
+
+outputs:
+  artifacts:
+    - name: test-results
+      path: build/Testing/**
+      retention: 7d
+  evidence:
+    commands: true
+    gitDiff: true
+    tests: true

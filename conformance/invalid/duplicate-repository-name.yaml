@@ -1,0 +1,14 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: duplicate-repository
+environment:
+  image: node:22-bookworm
+sources:
+  repositories:
+    - name: dependency
+      type: git
+      url: https://github.com/example/one.git
+    - name: dependency
+      type: git
+      url: https://github.com/example/two.git
