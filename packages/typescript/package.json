@@ -3,6 +3,21 @@
   "version": "0.1.0-alpha.0",
   "description": "Generated TypeScript types for the SandboxFile specification",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lifetime-ai/sandboxfile.git",
+    "directory": "packages/typescript"
+  },
+  "homepage": "https://github.com/Lifetime-ai/sandboxfile/tree/main/packages/typescript#readme",
+  "bugs": {
+    "url": "https://github.com/Lifetime-ai/sandboxfile/issues"
+  },
+  "keywords": [
+    "ai-agents",
+    "sandbox",
+    "typescript",
+    "types"
+  ],
   "type": "module",
   "engines": {
     "node": ">=22"

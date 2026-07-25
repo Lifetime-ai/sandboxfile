@@ -1,0 +1,51 @@
+{
+  "name": "@sandboxfile/validator",
+  "version": "0.1.0-alpha.0",
+  "description": "Parser, semantic validator, lock verifier, and CLI for SandboxFile",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lifetime-ai/sandboxfile.git",
+    "directory": "packages/validator"
+  },
+  "homepage": "https://github.com/Lifetime-ai/sandboxfile/tree/main/packages/validator#readme",
+  "bugs": {
+    "url": "https://github.com/Lifetime-ai/sandboxfile/issues"
+  },
+  "keywords": [
+    "ai-agents",
+    "sandbox",
+    "validator",
+    "cli",
+    "security"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
+  "bin": {
+    "sandboxfile": "./src/cli.js"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "dependencies": {
+    "@sandboxfile/schema": "0.1.0-alpha.0",
+    "ajv": "^8.17.1",
+    "yaml": "^2.8.1"
+  }
+}

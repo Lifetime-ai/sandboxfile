@@ -1,0 +1,9 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: pinned
+environment:
+  image: node@sha256:2222222222222222222222222222222222222222222222222222222222222222
+  platform:
+    os: linux
+    architecture: amd64

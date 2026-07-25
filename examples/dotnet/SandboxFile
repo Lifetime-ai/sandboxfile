@@ -55,24 +55,29 @@ tasks:
 network:
   default: deny
   allow:
-    - host: github.com
-      protocols: [https]
-    - host: api.nuget.org
-      protocols: [https]
-    - host: mcr.microsoft.com
-      protocols: [https]
+    - name: github
+      host: github.com
+      schemes: [https]
+      ports: [443]
+    - name: nuget
+      host: api.nuget.org
+      schemes: [https]
+      ports: [443]
+    - name: microsoft-registry
+      host: mcr.microsoft.com
+      schemes: [https]
+      ports: [443]
 
 capabilities:
   shell: true
   containerRuntime: true
   privileged: false
-  hostMounts: false
 
 persistence:
   caches:
     - name: nuget
       path: /root/.nuget/packages
-      scope: project
+      scope: sandbox
       retention: 7d
 
 outputs:

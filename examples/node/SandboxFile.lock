@@ -3,7 +3,7 @@ kind: SandboxLock
 
 metadata:
   name: node-example
-  sandboxFileDigest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  sandboxFileDigest: sha256:0c85e10b60be0f42156360b30c3af9da74b0557518a0101afb6f5f646d5b7786
   generatedBy:
     name: lifetime-sandbox
     version: 0.1.0-alpha.0
@@ -11,7 +11,18 @@ metadata:
 environment:
   image:
     reference: node:22-bookworm
-    digest: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    resolved:
+      mediaType: application/vnd.oci.image.index.v1+json
+      digest: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+      size: 1234
+    selected:
+      descriptor:
+        mediaType: application/vnd.oci.image.manifest.v1+json
+        digest: sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+        size: 2345
+      platform:
+        os: linux
+        architecture: amd64
 
 sources:
   primary:

@@ -5,7 +5,8 @@ metadata:
 environment:
   image: node:22-bookworm
   workdir: /workspace
-  entrypoint: [/bin/sh, -eu, -c]
+execution:
+  shell: [/bin/sh, -eu, -c]
 lifecycle:
   cleanup: destroy
 network:

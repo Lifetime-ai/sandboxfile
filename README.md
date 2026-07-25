@@ -24,8 +24,10 @@ lifecycle:
 network:
   default: deny
   allow:
-    - host: registry.npmjs.org
-      protocols: [https]
+    - name: npm-registry
+      host: registry.npmjs.org
+      schemes: [https]
+      ports: [443]
 
 tasks:
   test:
@@ -70,8 +72,10 @@ provider-specific execution objects are deliberately outside `v1alpha1`.
 | [`SPECIFICATION.md`](SPECIFICATION.md) | Version selection and normative-language rules |
 | [`spec/v1alpha1/`](spec/v1alpha1/) | Normative prose and JSON Schemas |
 | [`spec/v1alpha1/canonicalization.md`](spec/v1alpha1/canonicalization.md) | Portable lock digest algorithm |
+| [`spec/v1alpha1/conformance.md`](spec/v1alpha1/conformance.md) | Layered parser-to-runtime conformance model |
 | [`examples/`](examples/) | Node.js, .NET, C++, and polyglot examples |
 | [`conformance/`](conformance/) | Valid and invalid implementation fixtures |
+| [`docs/interoperability.md`](docs/interoperability.md) | Boundaries with OpenSandbox, OpenShell, Kubernetes, and Dev Containers |
 | [`proposals/`](proposals/) | Process for evolving the specification |
 | [`packages/typescript/`](packages/typescript/) | Generated TypeScript types |
 
@@ -89,6 +93,12 @@ The JSON Schemas use
 TypeScript declarations are generated from those schemas so the schema remains
 the source of truth.
 
+The reference validator and CLI are available in `packages/validator`:
+
+```bash
+pnpm validate SandboxFile --lock SandboxFile.lock
+```
+
 ## Implementations
 
 LifetimeSandbox is the initial private control-plane prototype. It compiles
@@ -97,6 +107,8 @@ execution provider such as OpenSandbox.
 
 Implementations may support additional providers, but provider SDK types and
 provider-generated sandbox identifiers are not part of this specification.
+Provider support requires a capability report and conformance level; it must
+not be inferred from schema validation.
 
 ## Contributing
 

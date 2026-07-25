@@ -1,0 +1,16 @@
+apiVersion: sandboxfile.dev/v1alpha1
+kind: Sandbox
+metadata:
+  name: duplicate-egress-name
+environment:
+  image: node:22-bookworm
+network:
+  allow:
+    - name: package-registry
+      host: registry.npmjs.org
+      schemes: [https]
+      ports: [443]
+    - name: package-registry
+      host: api.nuget.org
+      schemes: [https]
+      ports: [443]

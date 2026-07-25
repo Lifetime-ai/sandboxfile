@@ -8,7 +8,9 @@ The roadmap is directional. Normative changes still require proposals.
 - deterministic manifest and local-context digests
 - normative security and compatibility rules
 - generated TypeScript types
+- reference validator and CLI
 - examples and conformance fixtures
+- provider capability reporting and interoperability boundaries
 - LifetimeSandbox migration
 
 ## 0.2 — Reproducible environments
@@ -38,6 +40,9 @@ Candidate proposal areas:
 - GPU and accelerator requests;
 - checkpoint capability reporting; and
 - cross-provider conformance reports.
+
+Host mounts, retained sandboxes, public ingress, and cross-run shared caches
+remain deferred until portable authorization and isolation semantics exist.
 
 Multi-agent orchestration remains outside SandboxFile. An orchestrator may
 create several SandboxFile-defined computers, but the manifest does not become

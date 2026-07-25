@@ -2,15 +2,15 @@
   "manifests": [
     {
       "file": "valid/full.yaml",
-      "digest": "sha256:183cbc3e38137c43d6c708794f10c687d2524c590346e8c3acaacd4eb542f449"
+      "digest": "sha256:0038bcb4323977001a76de2e7e80f9441f78280a51c079e980b43cbc745625fe"
     },
     {
       "file": "valid/minimal.yaml",
-      "digest": "sha256:c27af8b55253be4a7ee570682251bbf76f33289c7d8f369c13247bba3819695b"
+      "digest": "sha256:4368f21c2816617157a430786dc5f5b5b52871170122bcc1f2c46c066f909d99"
     },
     {
       "file": "valid/minimal-explicit-defaults.yaml",
-      "digest": "sha256:c27af8b55253be4a7ee570682251bbf76f33289c7d8f369c13247bba3819695b"
+      "digest": "sha256:4368f21c2816617157a430786dc5f5b5b52871170122bcc1f2c46c066f909d99"
     }
   ],
   "contexts": [
@@ -30,6 +30,46 @@
         }
       ],
       "digest": "sha256:31a5895088900008c2dfb10e2292d6eb95d0a20e9e91a5616102383c9d9bb2dc"
+    }
+  ],
+  "invalidContexts": [
+    {
+      "name": "duplicate-path",
+      "entries": [
+        {
+          "path": "src",
+          "type": "directory",
+          "mode": "0755"
+        },
+        {
+          "path": "src",
+          "type": "directory",
+          "mode": "0755"
+        }
+      ]
+    },
+    {
+      "name": "escaping-symlink",
+      "entries": [
+        {
+          "path": "reports/latest",
+          "type": "symlink",
+          "mode": "120000",
+          "target": "../../outside"
+        }
+      ]
+    },
+    {
+      "name": "backslash-path",
+      "entries": [
+        {
+          "path": "src\\index.js",
+          "type": "file",
+          "mode": "0644",
+          "size": "0",
+          "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
     }
   ]
 }

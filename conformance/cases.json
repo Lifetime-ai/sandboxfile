@@ -35,6 +35,11 @@
     "valid": true
   },
   {
+    "manifest": "valid/pinned.yaml",
+    "lock": "valid/pinned.lock.yaml",
+    "valid": true
+  },
+  {
     "file": "invalid/missing-image.yaml",
     "valid": false,
     "code": "SCHEMA"
@@ -95,6 +100,11 @@
     "code": "SF1002"
   },
   {
+    "file": "invalid/task-prototype-dependency.yaml",
+    "valid": false,
+    "code": "SF1002"
+  },
+  {
     "file": "invalid/task-cycle.yaml",
     "valid": false,
     "code": "SF1003"
@@ -115,14 +125,64 @@
     "code": "SF1006"
   },
   {
+    "file": "invalid/noncanonical-source-path.yaml",
+    "valid": false,
+    "code": "SF1010"
+  },
+  {
     "file": "invalid/duplicate-credential-name.yaml",
     "valid": false,
     "code": "SF1007"
   },
   {
+    "file": "invalid/unknown-credential-binding.yaml",
+    "valid": false,
+    "code": "SF1008"
+  },
+  {
+    "file": "invalid/duplicate-egress-name.yaml",
+    "valid": false,
+    "code": "SF1009"
+  },
+  {
+    "file": "invalid/extension-unsafe-integer.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/extension-decimal.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/public-ingress.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/retained-sandbox.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/host-mounts.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
+    "file": "invalid/shared-cache.yaml",
+    "valid": false,
+    "code": "SCHEMA"
+  },
+  {
     "file": "invalid/duplicate-lock-repository-name.yaml",
     "valid": false,
     "code": "SF1106"
+  },
+  {
+    "file": "invalid/noncanonical-lock-path.yaml",
+    "valid": false,
+    "code": "SF1110"
   },
   {
     "file": "invalid/duplicate-key.yaml",
@@ -168,5 +228,23 @@
     "lock": "invalid/lock-repositories-mismatch.yaml",
     "valid": false,
     "code": "SF1105"
+  },
+  {
+    "manifest": "valid/pinned.yaml",
+    "lock": "invalid/lock-pinned-image-mismatch.yaml",
+    "valid": false,
+    "code": "SF1107"
+  },
+  {
+    "manifest": "valid/pinned.yaml",
+    "lock": "invalid/lock-platform-mismatch.yaml",
+    "valid": false,
+    "code": "SF1108"
+  },
+  {
+    "manifest": "valid/pinned.yaml",
+    "lock": "invalid/lock-direct-descriptor-mismatch.yaml",
+    "valid": false,
+    "code": "SF1109"
   }
 ]

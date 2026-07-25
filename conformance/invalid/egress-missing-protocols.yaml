@@ -6,4 +6,6 @@ environment:
   image: node:22-bookworm
 network:
   allow:
-    - host: example.com
+    - name: example
+      host: example.com
+      ports: [443]

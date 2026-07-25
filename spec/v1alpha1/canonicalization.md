@@ -12,6 +12,11 @@ tags, non-finite numbers, and values that do not validate against the selected
 schema. YAML aliases MAY be accepted, but an implementation MUST apply bounded
 alias-expansion limits before producing the JSON data model.
 
+Portable numeric values are limited to integers in the inclusive range
+`[-9007199254740991, 9007199254740991]`. Decimal or larger extension values
+MUST be represented as strings. This prevents parsers with different numeric
+models from accepting distinct source values as the same JSON number.
+
 Comments, YAML anchors, scalar spelling, document formatting, and mapping order
 do not affect a digest.
 
@@ -22,7 +27,8 @@ To calculate `metadata.sandboxFileDigest`, an implementation MUST:
 1. validate the parsed document against `SandboxFile.schema.json`;
 2. apply every semantic default in the following order:
    - `environment.workdir: /workspace`;
-   - `environment.entrypoint: ["/bin/sh", "-eu", "-c"]`;
+   - create `execution` when absent and apply
+     `execution.shell: ["/bin/sh", "-eu", "-c"]`;
    - create `lifecycle` when absent and apply `lifecycle.cleanup: destroy`;
    - create `network` when absent and apply `network.default: deny`;
    - apply `private` and `http` to omitted ingress visibility and protocol;

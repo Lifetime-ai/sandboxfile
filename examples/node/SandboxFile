@@ -58,10 +58,15 @@ tasks:
 network:
   default: deny
   allow:
-    - host: github.com
-      protocols: [https, ssh]
-    - host: registry.npmjs.org
-      protocols: [https]
+    - name: github
+      host: github.com
+      schemes: [https, ssh]
+      ports: [22, 443]
+      credentialBindings: [github]
+    - name: npm-registry
+      host: registry.npmjs.org
+      schemes: [https]
+      ports: [443]
 
 credentials:
   - name: github
@@ -75,14 +80,13 @@ capabilities:
   shell: true
   browser: false
   privileged: false
-  hostMounts: false
   containerRuntime: false
 
 persistence:
   caches:
     - name: pnpm
       path: /home/node/.local/share/pnpm/store
-      scope: project
+      scope: sandbox
       retention: 7d
 
 outputs:

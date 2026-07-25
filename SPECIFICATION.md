@@ -14,6 +14,8 @@ The normative machine-readable definitions are:
 
 The normative digest and parsing rules are in
 [`canonicalization.md`](spec/v1alpha1/canonicalization.md).
+Layered implementation claims and provider capability reports are defined in
+[`conformance.md`](spec/v1alpha1/conformance.md).
 
 If normative prose and a JSON Schema disagree, the conflict is a specification
 defect. Implementations must not silently broaden the authority requested by a
@@ -63,4 +65,5 @@ An implementation is conforming only if it:
 7. passes the fixtures under [`conformance/`](conformance/).
 
 Conformance applies to a named specification version and implementation
-release. It is not a permanent certification.
+release. It is not a permanent certification. Schema validation alone is only
+Level 2 conformance and does not establish runtime portability.
