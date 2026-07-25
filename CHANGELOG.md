@@ -25,6 +25,7 @@ releases. The `apiVersion` compatibility contract is documented separately in
 - Interoperability boundaries for OpenSandbox, OpenShell, Kubernetes Agent
   Sandbox, and Development Containers.
 - OIDC trusted-publishing workflow for reviewed alpha releases.
+- TypeScript 7 and current major GitHub Actions, pinned to reviewed commit SHAs.
 
 ### Changed
 
