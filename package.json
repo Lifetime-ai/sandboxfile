@@ -51,6 +51,6 @@
     "ajv": "^8.17.1",
     "json-schema-to-typescript": "^15.0.4",
     "typescript": "^7.0.2",
-    "yaml": "^2.8.1"
+    "yaml": "^2.9.1"
   }
 }
